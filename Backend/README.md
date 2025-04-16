@@ -1,20 +1,23 @@
-# User Registration Endpoint Documentation
+# User Registration & Login Endpoint Documentation
 
-## Endpoint
+## Endpoints
+
+- `POST /users/register`
+- `POST /users/login`
+
+---
+
+## 1. User Registration
+
+### Endpoint
 
 `POST /users/register`
 
----
-
-## Description
+### Description
 
 Registers a new user in the system. Requires a valid email, a password (minimum 6 characters), and a firstname (minimum 3 characters). Optionally, a lastname (minimum 3 characters) can be provided. On success, returns a JWT token and the created user object.
 
----
-
-## Request Body
-
-Send a JSON object in the following format:
+### Request Body
 
 ```json
 {
@@ -27,18 +30,16 @@ Send a JSON object in the following format:
 }
 ```
 
-### Field Requirements
+#### Field Requirements
 
 - `fullname.firstname` (string, required): At least 3 characters.
 - `fullname.lastname` (string, optional): At least 3 characters if provided.
 - `email` (string, required): Must be a valid email address.
 - `password` (string, required): At least 6 characters.
 
----
+### Responses
 
-## Responses
-
-### Success
+#### Success
 
 - **Status Code:** `201 Created`
 - **Body:**
@@ -56,7 +57,7 @@ Send a JSON object in the following format:
     }
     ```
 
-### Validation Error
+#### Validation Error
 
 - **Status Code:** `422 Unprocessable Entity`
 - **Body:**
@@ -72,7 +73,7 @@ Send a JSON object in the following format:
     }
     ```
 
-### Missing Required Fields
+#### Missing Required Fields
 
 - **Status Code:** `500 Internal Server Error`
 - **Body:**
@@ -82,15 +83,96 @@ Send a JSON object in the following format:
     }
     ```
 
----
-
-## Example Request
+### Example Request
 
 ```bash
-curl -X POST http://localhost:3000/users/register \
+curl -X POST http://localhost:4000/users/register \
   -H "Content-Type: application/json" \
   -d '{
     "fullname": { "firstname": "Jane", "lastname": "Smith" },
+    "email": "jane.smith@example.com",
+    "password": "securepassword"
+  }'
+```
+
+---
+
+## 2. User Login
+
+### Endpoint
+
+`POST /users/login`
+
+### Description
+
+Authenticates a user using their email and password. Returns a JWT token and the user object on successful login.
+
+### Request Body
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "yourpassword"
+}
+```
+
+#### Field Requirements
+
+- `email` (string, required): Must be a valid email address.
+- `password` (string, required): At least 6 characters.
+
+### Responses
+
+#### Success
+
+- **Status Code:** `200 OK`
+- **Body:**
+    ```json
+    {
+      "token": "<jwt_token>",
+      "user": {
+        "_id": "user_id",
+        "fullname": {
+          "firstname": "John",
+          "lastname": "Doe"
+        },
+        "email": "john.doe@example.com"
+      }
+    }
+    ```
+
+#### Validation Error
+
+- **Status Code:** `400 Bad Request`
+- **Body:**
+    ```json
+    {
+      "errors": [
+        {
+          "msg": "Error message",
+          "param": "field",
+          "location": "body"
+        }
+      ]
+    }
+    ```
+
+#### Invalid Credentials
+
+- **Status Code:** `401 Unauthorized`
+- **Body:**
+    ```json
+    {
+      "message": "invalid email or password"
+    }
+    ```
+
+### Example Request
+
+```bash
+curl -X POST http://localhost:4000/users/login \
+  -H "Content-Type: application/json" \
+  -d '{
     "email": "jane.smith@example.com",
     "password": "securepassword"
   }'
