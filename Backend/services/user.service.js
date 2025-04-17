@@ -1,7 +1,8 @@
 const { model } = require('mongoose');
 const userModel = require('../models/user.model');
 
-
+// This function creates a new user in the database.
+// It takes the user's firstname, lastname, email, and password as arguments.
 module.exports.createUser = async ({
     firstname, lastname , email , password
 }) => {
