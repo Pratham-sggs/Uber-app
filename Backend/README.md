@@ -4,6 +4,8 @@
 
 - `POST /users/register`
 - `POST /users/login`
+- `GET /users/profile`
+- `GET /users/logout`
 
 ---
 
@@ -176,6 +178,123 @@ curl -X POST http://localhost:4000/users/login \
     "email": "jane.smith@example.com",
     "password": "securepassword"
   }'
+```
+
+---
+
+## 3. Get User Profile
+
+### Endpoint
+
+`GET /users/profile`
+
+### Description
+
+Retrieves the authenticated user's profile information. This endpoint is protected and requires a valid JWT token (sent via cookie or Authorization header).
+
+### Authentication
+
+- Requires JWT token in `Authorization: Bearer <token>` header or as a cookie named `token`.
+
+### Responses
+
+#### Success
+
+- **Status Code:** `200 OK`
+- **Body:**
+    ```json
+    {
+      "user": {
+        "_id": "user_id",
+        "fullname": {
+          "firstname": "John",
+          "lastname": "Doe"
+        },
+        "email": "john.doe@example.com"
+      }
+    }
+    ```
+
+#### Unauthorized
+
+- **Status Code:** `401 Unauthorized`
+- **Body:**
+    ```json
+    {
+      "message": "Authentication required"
+    }
+    ```
+
+### Example Request
+
+```bash
+curl -X GET http://localhost:4000/users/profile \
+  -H "Authorization: Bearer <jwt_token>"
+```
+
+---
+
+## 4. User Logout
+
+### Endpoint
+
+`GET /users/logout`
+
+### Description
+
+Logs out the authenticated user by blacklisting the current JWT token and clearing the authentication cookie. This endpoint is protected and requires a valid JWT token.
+
+### Authentication
+
+- Requires JWT token in `Authorization: Bearer <token>` header or as a cookie named `token`.
+
+### Responses
+
+#### Success
+
+- **Status Code:** `200 OK`
+- **Body:**
+    ```json
+    {
+      "message": "Logged out successfully"
+    }
+    ```
+
+#### Already Logged Out
+
+- **Status Code:** `200 OK`
+- **Body:**
+    ```json
+    {
+      "message": "Already logged out"
+    }
+    ```
+
+#### No Token Provided
+
+- **Status Code:** `400 Bad Request`
+- **Body:**
+    ```json
+    {
+      "message": "No token provided"
+    }
+    ```
+
+#### Logout Failed
+
+- **Status Code:** `500 Internal Server Error`
+- **Body:**
+    ```json
+    {
+      "message": "Logout failed"
+    }
+    ```
+
+### Example Request
+
+```bash
+curl -X GET http://localhost:3000/users/logout \
+  -H "Authorization: Bearer <jwt_token>"
 ```
 
 ---

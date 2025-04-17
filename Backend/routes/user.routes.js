@@ -25,4 +25,8 @@ router.post('/login', [
 // This route is protected by the authMiddleware, which checks if the user is authenticated
 router.get('/profile',authMiddleware.authUser, userController.getUserProfile);
 
+router.get('/logout', authMiddleware.authUser, userController.logoutUser);
+
+
+
 module.exports = router;
