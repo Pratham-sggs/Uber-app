@@ -298,3 +298,114 @@ curl -X GET http://localhost:3000/users/logout \
 ```
 
 ---
+
+## 5. Captain Registration
+
+### Endpoint
+
+`POST /captains/register`
+
+### Description
+
+Registers a new captain (driver) in the system. Requires personal details and vehicle information. On success, returns the created captain object.
+
+### Request Body
+
+```json
+{
+  "fullname": {
+    "firstname": "Alex",
+    "lastname": "Rider"
+  },
+  "email": "alex.rider@example.com",
+  "password": "yourpassword",
+  "vehicle": {
+    "color": "Red",
+    "plate": "ABC1234",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+#### Field Requirements
+
+- `fullname.firstname` (string, required): At least 3 characters.
+- `fullname.lastname` (string, required): At least 3 characters.
+- `email` (string, required): Must be a valid email address.
+- `password` (string, required): At least 6 characters.
+- `vehicle.color` (string, required): At least 3 characters.
+- `vehicle.plate` (string, required): At least 3 characters.
+- `vehicle.capacity` (number, required): Must be a number.
+- `vehicle.vehicleType` (string, required): Must be one of `"car"`, `"motorcycle"`, or `"auto"`.
+
+### Responses
+
+#### Success
+
+- **Status Code:** `201 Created`
+- **Body:**
+    ```json
+    {
+      "captain": {
+        "_id": "captain_id",
+        "fullname": {
+          "firstname": "Alex",
+          "lastname": "Rider"
+        },
+        "email": "alex.rider@example.com",
+        "vehicle": {
+          "color": "Red",
+          "plate": "ABC1234",
+          "capacity": 4,
+          "vehicleType": "car"
+        }
+      }
+    }
+    ```
+
+#### Validation Error
+
+- **Status Code:** `422 Unprocessable Entity`
+- **Body:**
+    ```json
+    {
+      "errors": [
+        {
+          "msg": "Error message",
+          "param": "field",
+          "location": "body"
+        }
+      ]
+    }
+    ```
+
+#### Missing Required Fields
+
+- **Status Code:** `500 Internal Server Error`
+- **Body:**
+    ```json
+    {
+      "message": "All fields are required"
+    }
+    ```
+
+### Example Request
+
+```bash
+curl -X POST http://localhost:4000/captains/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullname": { "firstname": "Alex", "lastname": "Rider" },
+    "email": "alex.rider@example.com",
+    "password": "yourpassword",
+    "vehicle": {
+      "color": "Red",
+      "plate": "ABC1234",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }'
+```
+
+---
