@@ -5,7 +5,9 @@ const { validationResult, cookie } = require('express-validator');
 const blacklistTokenModel = require('../models/blacklistToken.model');
 
 
-
+// This function is used to register a new captain
+// It will check if the captain already exists
+// It will hash the password and create a new captain
 module.exports.registerCaptain = async (req, res,next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -34,6 +36,10 @@ module.exports.registerCaptain = async (req, res,next) => {
     res.status(201).json({token,captain});
 }
 
+// This function is used to login the captain
+// It will check if the captain exists and if the password is correct
+// It will also generate a token and set it in the cookie
+// It will return the captain object and the token
 module.exports.loginCaptain = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -54,10 +60,17 @@ module.exports.loginCaptain = async (req, res, next) => {
     res.status(200).json({ token, captain });
 }
 
+// This function is used to get the captain profile
+// It will return the captain object
 module.exports.getCaptainProfile = async (req, res, next) => {
     res.status(200).json({ captain: req.captain });
 }
 
+
+
+// This function is used to Logout the captain
+// It will blacklist the token and clear the cookie
+// It will also return a success message
 module.exports.logoutCaptain = async (req, res, next) => {
     const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
     await blacklistTokenModel.create({ token });
