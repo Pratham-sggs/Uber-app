@@ -1,7 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState,useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { CaptainDataContext } from '../context/CaptainContext'
+import axios from 'axios'
 
 const CaptainSignup = () => {
+  const nevigate = useNavigate()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -13,9 +16,11 @@ const CaptainSignup = () => {
   const [vehicleType, setVehicleType] = useState('')
   const [captainData, setCaptainData] = useState({})
 
-  const submitHandler = (e) => {
+  const {captain, setCaptain} = useContext(CaptainDataContext)
+
+  const submitHandler = async (e) => {
     e.preventDefault()
-    setCaptainData ({
+    const captainData =  {
       fullname: {
         firstname: firstName,
         lastname: lastName
@@ -26,10 +31,16 @@ const CaptainSignup = () => {
         color: vehicleColor,
         plate: vehiclePlate,
         capacity: vehicleCapacity,
-        vehicleType
+        vehicleType: vehicleType
       }
-    })
-
+    }
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`, captainData)
+    if (response.status === 201) {
+      console.log(response.data)
+      setCaptain(response.data.captain)
+      localStorage.setItem('token', response.data.token)
+      nevigate('/captain-home')
+    }
     setEmail('')
     setFirstName('')
     setLastName('')
@@ -43,7 +54,7 @@ const CaptainSignup = () => {
   return (
     <div className='py-5 px-5 h-screen flex flex-col justify-between'>
       <div>
-        <img className='w-20 mb-3' src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="" />
+        <img className='w-20 mb-3' src="/images/uber-driver.svg" alt="" />
 
         <form onSubmit={submitHandler}>
           <h3 className='text-lg font-medium mb-2'>What's our Captain's name</h3>
@@ -123,7 +134,7 @@ const CaptainSignup = () => {
               <option value="" disabled>Select Vehicle Type</option>
               <option value="car">Car</option>
               <option value="auto">Auto</option>
-              <option value="moto">Moto</option>
+              <option value="motorcycle">Motorcycle</option>
             </select>
           </div>
 
