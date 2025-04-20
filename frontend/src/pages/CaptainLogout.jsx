@@ -3,32 +3,28 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
 const CaptainLogout = () => {
-    const token = localStorage.getItem('captain-token')
     const navigate = useNavigate()
 
     useEffect(() => {
         const logoutCaptain = async () => {
+            const token = localStorage.getItem('token')
+
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/captains/logout`, {
+                await axios.get(`${import.meta.env.VITE_API_URL}/captains/logout`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 })
-
-                if (response.status === 200) {
-                    localStorage.removeItem('captain-token')
-                    navigate('/captain-login')
-                }
             } catch (error) {
-                console.error("Logout failed:", error)
-                // Optionally still navigate to login
-                localStorage.removeItem('captain-token')
+                console.error("Logout API failed:", error)
+            } finally {
+                localStorage.removeItem('token') // ✅ always remove token
                 navigate('/captain-login')
             }
         }
 
         logoutCaptain()
-    }, [navigate, token])
+    }, [navigate])
 
     return <div>Logging out...</div>
 }
