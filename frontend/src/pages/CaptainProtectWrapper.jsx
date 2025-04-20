@@ -16,7 +16,6 @@ const CaptainProtectWrapper = ({
 
 
     useEffect(() => {
-      console.log(token)
         if (!token) {
             navigate('/captain-login')
         }

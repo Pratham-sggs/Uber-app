@@ -12,7 +12,6 @@ const UserLogout = () => {
         'Authorization': `Bearer ${token}`
       }
     }).then((response) => {
-      console.log(response)
       if (response.status === 200) {
         localStorage.removeItem('token')
         navigate('/login')
